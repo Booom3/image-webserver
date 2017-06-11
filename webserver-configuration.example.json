@@ -1,0 +1,13 @@
+{
+    "webpageFolder": "C:\\my\\angular\\website\\folder",
+    "imageFolders": [
+        {
+            "directory": "C:\\joes\\image\\folder\\folder",
+            "route": "joe"
+        },
+        {
+            "directory": "D:\\meme\\stash\\folder",
+            "route": "memes"
+        }
+    ]
+}

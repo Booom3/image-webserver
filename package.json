@@ -1,0 +1,26 @@
+{
+  "name": "image-webserver",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./distribution/executable/worldwideweb"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "class-transformer": "^0.1.6",
+    "class-validator": "^0.7.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "moment": "^2.18.1",
+    "morgan": "~1.8.1",
+    "reflect-metadata": "^0.1.10",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.35",
+    "@types/morgan": "^1.7.32",
+    "typescript": "^2.3.4"
+  }
+}

@@ -1,0 +1,22 @@
+{
+    "compilerOptions":  {
+        "target": "es5",
+        "moduleResolution": "node",
+        "baseUrl": "source",        
+        "outDir": "./distribution/",
+        "sourceMap": true,
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "typeRoots": [
+            "node_modules/@types/"
+        ]
+    },
+    "include": [
+        "source/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "distribution",
+        "typings"
+    ]
+}
