@@ -1,6 +1,7 @@
 import * as express from 'express';
 var router = express.Router();
 import * as path from 'path';
+import * as Config from '../../config';
 
 class returnDataFormat {
     id: string;
@@ -17,18 +18,7 @@ export function CreateImageRoute (apiRouteName: string, staticRouteName: string,
             var ret: returnJSONFormat = new returnJSONFormat();
             for (let i = 0; i < 9; i++) {
                 let fileName: string = files[Math.floor(Math.random() * files.length)];
-                let ext: string = path.extname(fileName);
-                let filetype: string;
-                switch (ext) {
-                    case '.webm':
-                    case '.mp4':
-                        filetype = 'video';
-                        break;
-
-                    default:
-                        filetype = 'image';
-                        break;
-                }
+                let filetype: string = Config.fileType(fileName);
                 ret.data.push({
                     id: fileName,
                     fullpath: staticRouteName + '/' + fileName,
