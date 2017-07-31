@@ -31,10 +31,7 @@ app.use('/random', (req, res) => {
   let images = Config.getAllPossibleImages();
   res.render('random', { url: Config.Configuration.websiteUrl, image: images[Math.floor(Math.random() * images.length)]});
 });
-app.get('/upload', (req, res) => {
-  res.render('upload');
-});
-app.post('/upload', (req, res) => {
+app.post('/api/upload', (req, res) => {
   if (!req['files']) {
     return res.status(400);
   }
@@ -42,11 +39,13 @@ app.post('/upload', (req, res) => {
     if (err) { return console.log(err); }
     console.log('File ' + req['files'].file.name + ' uploaded.');
   });
-  res.redirect('/upload');
+  res.sendStatus(200);
 })
 
 // Default to Angular page
-app.use('/*', express.static(path.join(Config.Configuration.webpageFolder, 'index.html')));
+app.use('/*', (req, res) => {
+  res.sendFile(path.join(Config.Configuration.webpageFolder, 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

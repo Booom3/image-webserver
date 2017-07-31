@@ -1,5 +1,6 @@
 {
     "webpageFolder": "C:\\my\\angular\\website\\folder",
+    "websiteUrl": "http://your.url.here",
     "imageFolders": [
         {
             "directory": "C:\\joes\\image\\folder\\folder",
