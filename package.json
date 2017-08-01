@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./distribution/executable/worldwideweb"
+    "start": "node ./distribution/executable/worldwideweb",
+    "build": "./node_modules/.bin/tsc",
+    "host": "./node_modules/.bin/tsc && npm start"
   },
   "dependencies": {
     "@types/busboy": "^0.2.3",
