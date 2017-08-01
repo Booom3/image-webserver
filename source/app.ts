@@ -13,7 +13,7 @@ import * as Config from './config';
 var app = express();
 
 app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 logger.token('datelocaldebug', (req, res) => { return moment().format('D/M HH:mm:ss'); });
 app.use(logger(':remote-addr :remote-user [:datelocaldebug] ":method :status :url HTTP/:http-version" :response-time ms :res[content-length]'));
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(fileUpload({safeFileNames: true, preserveExtension: true,
   limits: { fileSize: 1024 * 1024 * 10}}));
-
+  
 app.use(express.static(Config.Configuration.webpageFolder));
 app.use(Config.InitializeRoutes());
 

@@ -8,6 +8,7 @@ import * as ClassTransformer from 'class-transformer';
 import * as util from 'util';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import * as pug from 'pug';
 
 // Configuration file read and validation
 namespace ConfigFormat {
@@ -106,12 +107,24 @@ async function getRouteWithFlags(route) {
     else
         return null;
 }
-function readDir(directory): string[] {
-    return fs.readdirSync(directory);
-}
+
 function getImagesWithStaticRouteFromDir(directory, staticRoute): string[] {
-    return readDir(directory).filter((f) => isImage(f)).
+    return fs.readdirSync(directory).filter((f) => isImage(f)).
         map((m) => (staticRoute + '/' + m));
+}
+
+function getRandomIndexMeta(image) {
+    let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
+    return index.replace('<meta name="prerender">', pug.renderFile('./views/random-prerender.pug', { image: image }));
+}
+function getUploadIndexMeta(image) {
+    let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
+    return index.replace('<meta name="prerender">', pug.renderFile('./views/upload-prerender.pug', { image: image }));
+}
+
+function getRandomImage(directory, route) {
+    let images = getImagesWithStaticRouteFromDir(directory, '/static/' + route);
+    return images[Math.floor(Math.random() * images.length)];
 }
 
 export function InitializeRoutes(): express.Router {
@@ -131,8 +144,37 @@ export function InitializeRoutes(): express.Router {
         if (!row) 
             return next();
 
-        let images = getImagesWithStaticRouteFromDir(row.directory, '/static/' + req.params.route);
-        return res.render('random', { image: images[Math.floor(Math.random() * images.length)]});
+        let image = getRandomImage(row.directory, req.params.route);
+        return res.send(getRandomIndexMeta(image));
+        // return res.render('random', { image: images[Math.floor(Math.random() * images.length)]});
+    });
+
+    class returnDataFormat {
+        id: string;
+        fullpath: string;
+        type: string;
+    }
+    class returnJSONFormat {
+        data: returnDataFormat[] = [];
+    }
+
+    router.use('/api/:route', async (req, res, next) => {
+        let row = await getRoute(req.params.route);
+        if (!row) 
+            return next();
+
+        let files: string[] = fs.readdirSync(row.directory);
+        var ret: returnJSONFormat = new returnJSONFormat();
+        for (let i = 0; i < 9; i++) {
+            let fileName: string = files[Math.floor(Math.random() * files.length)];
+            let filetype: string = fileType(fileName);
+            ret.data.push({
+                id: fileName,
+                fullpath: '/static/' + req.params.route + '/' + fileName,
+                type: filetype
+            });
+        }
+        res.json(ret);
     });
 
     router.get('/upload/:route', async (req, res, next) => {
@@ -143,7 +185,8 @@ export function InitializeRoutes(): express.Router {
         if (!row.accepts_uploads)
             return next();
 
-        res.render('upload', { uploadpath: '/upload/' + req.params.route});
+        let image = getRandomImage(row.directory, req.params.route);
+        return res.send(getUploadIndexMeta(image));
     });
     router.post('/upload/:route', async (req, res, next) => {
         let row = await getRouteWithFlags(req.params.route);
