@@ -40,10 +40,10 @@ app.post('/api/upload', (req, res) => {
     console.log('File ' + req['files'].file.name + ' uploaded.');
   });
   res.sendStatus(200);
-})
+});
 
 // Default to Angular page
-app.use('/*', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(Config.Configuration.webpageFolder, 'index.html'));
 });
 
