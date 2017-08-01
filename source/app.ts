@@ -20,8 +20,8 @@ app.use(logger(':remote-addr :remote-user [:datelocaldebug] ":method :status :ur
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(fileUpload({safeFileNames: true, preserveExtension: true,
-  limits: { fileSize: 1024 * 1024 * 10}}));
+app.use(fileUpload({safeFileNames: true, preserveExtension: 20,
+  limits: { fileSize: 1024 * 1024 * 10 }}));
   
 app.use(express.static(Config.Configuration.webpageFolder));
 app.use(Config.InitializeRoutes());
