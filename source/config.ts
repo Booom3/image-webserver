@@ -17,22 +17,10 @@ namespace ConfigFormat {
         webpageFolder: string;
         @ClassValidator.IsDefined()
         websiteUrl: string;
-        @ClassValidator.IsDefined()        
-        @ClassValidator.ValidateNested()
-        @ClassTransformer.Type(() => ImageFolder)
-        imageFolders: ImageFolder[];
-        @ClassValidator.IsDefined()        
+        @ClassValidator.IsDefined()
         @ClassValidator.ValidateNested()
         @ClassTransformer.Type(() => DBConnect)
         dbConnect: DBConnect;
-    }
-    export class ImageFolder {
-        @ClassValidator.IsDefined()
-        directory: string;
-        @ClassValidator.IsDefined()
-        route: string;
-        allRandom: boolean = false;
-        acceptsUploads: boolean = false;
     }
     export class DBConnect {
         @ClassValidator.IsDefined()
@@ -92,15 +80,21 @@ import * as db from './db/index';
 let allRoutesImages: (() => string[])[] = [];
 
 async function getRoute(route) {
-    const { rows } = await db.query("SELECT directory FROM routes WHERE route = $1", [route]);
+    const { rows } = await db.query(
+        "SELECT directory FROM routes WHERE route = $1",
+        [route]
+    );
+    
     if (rows)
         return rows[0];
     else
         return null;
 }
 async function getRouteWithFlags(route) {
-    const { rows } = await db.query("SELECT * FROM routes INNER JOIN route_flags ON route_flags.route = routes.route WHERE routes.route = $1",
-                                    [route]);
+    const { rows } = await db.query(
+        "SELECT * FROM routes INNER JOIN route_flags ON route_flags.route = routes.route WHERE routes.route = $1",
+        [route]
+    );
                                 
     if (rows)
         return rows[0];
@@ -217,49 +211,6 @@ export function InitializeRoutes(): express.Router {
         res.sendStatus(200);
     });
 
-    configuration.imageFolders.forEach((val) => {
-        let apiRoute = '/api/' + val.route, staticRoute = '/static/' + val.route,
-            randomRoute = '/random/' + val.route, uploadRoute = "/upload/" + val.route;
-        let func = (): string[] => {
-            return fs.readdirSync(val.directory);
-        }
-        let funcImages = (): string[] => {
-            return func().filter((f) => isImage(f)).
-                map((m) => (staticRoute + '/' + m));
-        }
-        if (val.allRandom) {
-            allRoutesImages.push(funcImages);
-        }
-        router.use(RetrieveImages.CreateImageRoute(apiRoute, staticRoute, func));
-        router.use(randomRoute, (req, res) => {
-            let images = funcImages();
-            res.render('random', { image: images[Math.floor(Math.random() * images.length)]});
-        });
-        if (val.acceptsUploads) {
-            router.post(uploadRoute, (req, res) => {
-                if (!req['files']) {
-                    return res.status(400);
-                }
-                let file = req['files'].file;
-                const hash = crypto.createHash('sha256');
-                hash.update(file.data.toString());
-                let fileExt = path.extname(file.name);
-                let fileName = hash.digest('hex') + fileExt;
-                let filePath = path.join(val.directory, fileName);
-                if (!fs.existsSync(filePath)) {
-                    req['files'].file.mv(filePath, (err) => {
-                        if (err) { return console.log(err); }
-                        console.log('File ' + req['files'].file.name + ' uploaded.');
-                    });
-                }
-                else {
-                    console.log('File ' + fileName + ' is a duplicate. Ignoring.');
-                }
-                res.sendStatus(200);
-            });
-        }
-        router.use(staticRoute, express.static(val.directory));
-    });
     return router;
 }
 
