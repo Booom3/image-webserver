@@ -20,48 +20,50 @@ app.use(logger(':remote-addr :remote-user [:datelocaldebug] ":method :status :ur
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(fileUpload({safeFileNames: true, preserveExtension: 20,
-  limits: { fileSize: 1024 * 1024 * 10 }}));
-  
+app.use(fileUpload({
+    safeFileNames: true, preserveExtension: 20,
+    limits: { fileSize: 1024 * 1024 * 10 }
+}));
+
 app.use(express.static(Config.Configuration.webpageFolder));
 app.use(Config.InitializeRoutes());
 
 // Special case
 app.use('/random', (req, res) => {
-  let images = Config.getAllPossibleImages();
-  res.render('random', { url: Config.Configuration.websiteUrl, image: images[Math.floor(Math.random() * images.length)]});
+    let images = Config.getAllPossibleImages();
+    res.render('random', { url: Config.Configuration.websiteUrl, image: images[Math.floor(Math.random() * images.length)] });
 });
 app.post('/api/upload', (req, res) => {
-  if (!req['files']) {
-    return res.status(400);
-  }
-  req['files'].file.mv(path.join('C:/Users/Joakim/Pictures/User Uploads', req['files'].file.name), (err) => {
-    if (err) { return console.log(err); }
-    console.log('File ' + req['files'].file.name + ' uploaded.');
-  });
-  res.sendStatus(200);
+    if (!req['files']) {
+        return res.status(400);
+    }
+    req['files'].file.mv(path.join('C:/Users/Joakim/Pictures/User Uploads', req['files'].file.name), (err) => {
+        if (err) { return console.log(err); }
+        console.log('File ' + req['files'].file.name + ' uploaded.');
+    });
+    res.sendStatus(200);
 });
 
 // Default to Angular page
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(Config.Configuration.webpageFolder, 'index.html'));
+    res.sendFile(path.join(Config.Configuration.webpageFolder, 'index.html'));
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
