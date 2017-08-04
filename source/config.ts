@@ -102,14 +102,17 @@ async function getRouteWithFlags(route) {
         return null;
 }
 
-function getImagesWithStaticRouteFromDir(directory, staticRoute): string[] {
-    return fs.readdirSync(directory).filter((f) => isImage(f)).
-        map((m) => (staticRoute + '/' + m));
+function getImagesFromDirectory(directory): string[] {
+    return fs.readdirSync(directory).filter((f) => isImage(f));
 }
 
-function getRandomIndexMeta(image) {
+function getImageStaticRoute(image, staticRoute): string {
+    return `${configuration.websiteUrl}${staticRoute}/${image}`;
+}
+
+function getUserIndexMeta(image) {
     let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
-    return index.replace('<meta name="prerender">', pug.renderFile('./views/random-prerender.pug', { image: image }));
+    return index.replace('<meta name="prerender">', pug.renderFile('./views/user-prerender.pug', { image: image }));
 }
 function getUploadIndexMeta(image) {
     let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
@@ -117,8 +120,8 @@ function getUploadIndexMeta(image) {
 }
 
 function getRandomImage(directory, route) {
-    let images = getImagesWithStaticRouteFromDir(directory, '/static/' + route);
-    return images[Math.floor(Math.random() * images.length)];
+    let images = getImagesFromDirectory(directory);
+    return getImageStaticRoute(images[Math.floor(Math.random() * images.length)], `/static/${route}`);
 }
 
 export function InitializeRoutes(): express.Router {
@@ -133,14 +136,13 @@ export function InitializeRoutes(): express.Router {
         return express.static(row.directory)(req, res, next);
     });
 
-    router.use('/random/:route', async (req, res, next) => {
+    router.use('/user/:route', async (req, res, next) => {
         let row = await getRoute(req.params.route);
-        if (!row) 
+        if (!row)
             return next();
 
         let image = getRandomImage(row.directory, req.params.route);
-        return res.send(getRandomIndexMeta(image));
-        // return res.render('random', { image: images[Math.floor(Math.random() * images.length)]});
+        return res.send(getUserIndexMeta(image));
     });
 
     class returnDataFormat {

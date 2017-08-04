@@ -28,22 +28,6 @@ app.use(fileUpload({
 app.use(express.static(Config.Configuration.webpageFolder));
 app.use(Config.InitializeRoutes());
 
-// Special case
-app.use('/random', (req, res) => {
-    let images = Config.getAllPossibleImages();
-    res.render('random', { url: Config.Configuration.websiteUrl, image: images[Math.floor(Math.random() * images.length)] });
-});
-app.post('/api/upload', (req, res) => {
-    if (!req['files']) {
-        return res.status(400);
-    }
-    req['files'].file.mv(path.join('C:/Users/Joakim/Pictures/User Uploads', req['files'].file.name), (err) => {
-        if (err) { return console.log(err); }
-        console.log('File ' + req['files'].file.name + ' uploaded.');
-    });
-    res.sendStatus(200);
-});
-
 // Default to Angular page
 app.get('/*', (req, res) => {
     res.sendFile(path.join(Config.Configuration.webpageFolder, 'index.html'));
