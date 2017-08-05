@@ -118,6 +118,10 @@ function getUploadIndexMeta(image) {
     let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
     return index.replace('<meta name="prerender">', pug.renderFile('./views/upload-prerender.pug', { image: image }));
 }
+function getViewIndexMeta(image) {
+    let index = fs.readFileSync(path.join(configuration.webpageFolder, 'index.html'), 'utf8');
+    return index.replace('<meta name="prerender">', pug.renderFile('./views/view-prerender.pug', { image: image }));
+}
 
 function getRandomImage(directory, route) {
     let images = getImagesFromDirectory(directory);
@@ -176,7 +180,7 @@ export function InitializeRoutes(): express.Router {
     router.use('/view/:route', (req, res, next) => {
         let url = decodeURIComponent(req.query.path);
 
-        return res.send(getUserIndexMeta(`${configuration.websiteUrl}${url}`));
+        return res.send(getViewIndexMeta(`${configuration.websiteUrl}${url}`));
     })
 
     router.get('/upload/:route', async (req, res, next) => {
