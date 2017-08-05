@@ -125,7 +125,7 @@ function getRandomImage(directory, route) {
 }
 
 export function InitializeRoutes(): express.Router {
-    let router = new Router();
+    let router: express.Router = new Router();
 
     
     router.use('/static/:route', async (req, res, next) => {
@@ -172,6 +172,12 @@ export function InitializeRoutes(): express.Router {
         }
         res.json(ret);
     });
+
+    router.use('/view/:route', (req, res, next) => {
+        let url = decodeURIComponent(req.query.path);
+
+        return res.send(getUserIndexMeta(`${configuration.websiteUrl}${url}`));
+    })
 
     router.get('/upload/:route', async (req, res, next) => {
         let row = await getRouteWithFlags(req.params.route);
