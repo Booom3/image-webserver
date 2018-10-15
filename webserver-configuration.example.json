@@ -1,14 +1,14 @@
 {
-    "webpageFolder": "C:\\my\\angular\\website\\folder",
+    "webpageFolder": ".\folder",
     "websiteUrl": "http://your.url.here",
     "imageFolders": [
         {
-            "directory": "C:\\joes\\image\\folder\\folder",
-            "route": "joe"
+            "directory": "image\\folder\\folder",
+            "route": "demoRoute"
         },
         {
-            "directory": "D:\\meme\\stash\\folder",
-            "route": "memes"
+            "directory": "meme\\stash\\folder",
+            "route": "demoMeme"
         }
     ]
 }

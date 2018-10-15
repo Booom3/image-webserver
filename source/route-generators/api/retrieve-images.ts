@@ -1,7 +1,8 @@
-import * as express from 'express';
-var router = express.Router();
+import {Router} from 'express';
 import * as path from 'path';
 import * as Config from '../../config';
+
+let router = Router();
 
 class returnDataFormat {
     id: string;
@@ -12,7 +13,7 @@ class returnJSONFormat {
     data: returnDataFormat[] = [];
 }
 export function CreateImageRoute (apiRouteName: string, staticRouteName: string,
-    imageList: () => string[]): express.Router {
+    imageList: () => string[]): Router {
         router.get(apiRouteName, (req, res) => {
             let files: string[] = imageList();
             var ret: returnJSONFormat = new returnJSONFormat();
