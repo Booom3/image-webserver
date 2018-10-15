@@ -1,16 +1,16 @@
 import * as express from 'express';
 import * as path from 'path';
-var favicon = require('serve-favicon');
+import * as favicon from 'serve-favicon';
 import * as logger from 'morgan';
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 import * as moment from 'moment';
 import * as fs from 'fs';
 import * as fileUpload from 'express-fileupload';
 
 import * as Config from './config';
 
-var app = express();
+let app = express();
 
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
@@ -35,8 +35,7 @@ app.get('/*', (req, res) => {
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    next(err);
+    next(new Error('Not Found'));
 });
 
 // error handler
@@ -50,5 +49,5 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-module.exports = app;
-export { app };
+
+export default app;
